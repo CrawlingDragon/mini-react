@@ -1,5 +1,4 @@
-import { createElement, createTextNode } from './react-core/index.js';
+import React from './core/React.js';
 
-let text = createTextNode('app');
-const app = createElement('div', { id: 'app' }, text);
+const app = React.createElement('div', { id: 'app' }, 'haha-', 'hehe');
 export default app;

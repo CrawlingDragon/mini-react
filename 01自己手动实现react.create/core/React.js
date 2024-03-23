@@ -1,5 +1,24 @@
+export function createTextNode(text) {
+  return {
+    type: 'TEXT_ELEMTNT',
+    nodeValue: text,
+    props: {
+      children: [],
+    },
+  };
+}
+export function createElement(type, props, ...children) {
+  return {
+    type,
+    props: {
+      ...props,
+      children: children.map((child) => {
+        return typeof child === 'string' ? createTextNode(child) : child;
+      }),
+    },
+  };
+}
 function render(el, container) {
-  console.log('el', el);
   const dom =
     el.type === 'TEXT_ELEMTNT' ? document.createTextNode('') : document.createElement(el.type);
   Object.keys(el.props).forEach((key) => {
@@ -20,16 +39,6 @@ function render(el, container) {
   }
   container.appendChild(dom);
 }
+const React = { createElement, render };
 
-// import render from '../react-dom/client.js';
-
-const ReactDom = {
-  createRoot(container) {
-    return {
-      render(app) {
-        return render(app, container);
-      },
-    };
-  },
-};
-export default ReactDom;
+export default React;

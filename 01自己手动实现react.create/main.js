@@ -78,7 +78,6 @@
 // dom.appendChild(textNode);
 
 import app from './app.js';
-import ReactDom from './react-dom/client.js';
-console.log('app', app);
+import ReactDom from './core/ReactDom.js';
 
 ReactDom.createRoot(document.querySelector('#root')).render(app);
