@@ -48,10 +48,10 @@ function render(el, container) {
 function createDom(type) {
   return type === 'TEXT_ELEMTNT' ? document.createTextNode('') : document.createElement(type);
 }
-function propsUpdate(dom, work) {
-  Object.keys(work.props).forEach((key) => {
+function propsUpdate(dom, fiber) {
+  Object.keys(fiber.props).forEach((key) => {
     if (key !== 'children') {
-      dom[key] = work.props[key];
+      dom[key] = fiber.props[key];
     }
   });
 }
@@ -61,30 +61,20 @@ function initChild(fiber) {
   let prevChild = null;
 
   children.forEach((child, index) => {
-    let newWork = {
+    let newFiber = {
       type: child.type,
       props: child.props,
       parent: fiber,
       sibling: null,
       child: null,
-      nodeValue: child.nodeValue,
     };
     if (index == 0) {
-      fiber.child = newWork;
+      fiber.child = newFiber;
     } else {
-      prevChild.sibling = newWork;
+      prevChild.sibling = newFiber;
     }
-    prevChild = newWork;
+    prevChild = newFiber;
   });
-
-  //5.返回下一个workOfUnit
-  if (fiber.child) {
-    return fiber.child;
-  }
-  if (fiber.sibling) {
-    return fiber.sibling;
-  }
-  return fiber.parent.sibling;
 }
 function performWorkOfUnit(fiber) {
   // 1.创建dom
@@ -95,7 +85,15 @@ function performWorkOfUnit(fiber) {
     // 3.处理props
     propsUpdate(dom, fiber);
   }
-  return initChild(fiber);
+  initChild(fiber);
+  //5.返回下一个workOfUnit
+  if (fiber.child) {
+    return fiber.child;
+  }
+  if (fiber.sibling) {
+    return fiber.sibling;
+  }
+  return fiber.parent?.sibling;
 }
 
 function workLoop(IdleDeadline) {
