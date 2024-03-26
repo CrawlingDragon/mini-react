@@ -62,25 +62,32 @@ function initChild(fiber, children) {
     prevChild = newFiber;
   });
 }
+
+function updateFunctionComponent(fiber) {
+  const children = [fiber.type(fiber.props)];
+  initChild(fiber, children);
+}
+function updateHostComponent(fiber) {
+  // 1.创建dom
+  if (!fiber.dom) {
+    const dom = (fiber.dom = createDom(fiber.type));
+    // 2.把dom添加到parent内
+    // fiber.parent.dom.appendChild(dom);
+    // 3.处理props
+    propsUpdate(dom, fiber);
+  }
+  const children = fiber.props.children;
+  initChild(fiber, children);
+}
+
 function performWorkOfUnit(fiber) {
   const isFunctionComponent = typeof fiber.type === 'function';
-  if (isFunctionComponent) {
-    console.log('fiber', fiber);
-  }
-  if (!isFunctionComponent) {
-    // 1.创建dom
-    if (!fiber.dom) {
-      const dom = (fiber.dom = createDom(fiber.type));
-      // 2.把dom添加到parent内
-      // fiber.parent.dom.appendChild(dom);
-      // 3.处理props
-      propsUpdate(dom, fiber);
-    }
-  }
-  // const children = isFunctionComponent ? [fiber.type()] : fiber.props.children;
-  const children = isFunctionComponent ? [fiber.type(fiber.props)] : fiber.props.children;
 
-  initChild(fiber, children);
+  if (isFunctionComponent) {
+    updateFunctionComponent(fiber);
+  } else {
+    updateHostComponent(fiber);
+  }
   //5.返回下一个workOfUnit
   if (fiber.child) {
     return fiber.child;

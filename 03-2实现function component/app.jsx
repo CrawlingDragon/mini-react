@@ -9,7 +9,7 @@ const App = (
     <div id="parent-div">
       haha
       <Count num={10} />
-      {/* <Count num={20} /> */}
+      <Count num={20} />
     </div>
   </div>
 );
