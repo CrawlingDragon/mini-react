@@ -250,7 +250,7 @@ function commitWork(fiber) {
     fiberParent = fiberParent.parent;
   }
 
-  if (fiber.effectTag === 'update') {
+  if (fiber.effectTag === 'update' && fiber.dom) {
     //表示更新
     propsUpdate(fiber.dom, fiber.props, fiber.alternate.props);
   } else if (fiber.effectTag === 'placement') {
@@ -279,6 +279,9 @@ function workLoop(IdleDeadline) {
   if (nextWorkOfUnit == undefined && root) {
     // vdom渲染完毕，也就是nextWorkOfUnit == undefined时，做一次递归dom插入
     commitRoot();
+  }
+  if (nextWorkOfUnit && !root) {
+    root = currentRoot;
   }
   requestIdleCallback(workLoop);
 }
